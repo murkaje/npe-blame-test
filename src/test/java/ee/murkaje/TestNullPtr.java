@@ -192,7 +192,7 @@ public class TestNullPtr {
     NullPointerException npe = assertThrows(NullPointerException.class, testClass::throwNull);
     npe.printStackTrace(System.out);
 
-    assertEquals("Throwing a null exception object", npe.getMessage());
+    assertEquals("Throwing null exception object", npe.getMessage());
   }
 
   @Test
