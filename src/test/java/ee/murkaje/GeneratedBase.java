@@ -1,7 +1,7 @@
 package ee.murkaje;
 
 @FunctionalInterface
-public interface GeneratedBase<T> {
+public interface GeneratedBase {
 
   default void throwNull() throws NullPointerException {
     throw null;
@@ -20,15 +20,17 @@ public interface GeneratedBase<T> {
   }
 
   default void generateNpeDebugMethodChaining() {
-    boolean test = true;
-    (test ? getNullString() : getEmptyString()).compareTo(getEmptyString());
+    getNullString().compareTo(getEmptyString());
   }
 
-  default void generateNpeDebug(T o) {
-    String myVar = o.toString();
-    myVar = null;
+  default void generateNpeDebug() {
+    String myVar = null;
     myVar.toLowerCase();
   }
 
-  void consume(T o);
+  default void run() {
+    consume(null);
+  }
+
+  void consume(Object o);
 }
