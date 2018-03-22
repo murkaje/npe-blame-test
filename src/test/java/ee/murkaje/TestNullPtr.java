@@ -22,7 +22,7 @@ public class TestNullPtr {
   private static AtomicInteger counter = new AtomicInteger(0);
 
   @SuppressWarnings("unchecked")
-  public static GeneratedBase genTestClass(String runMethodSrc) throws Exception {
+  private static GeneratedBase genTestClass(String runMethodSrc) throws Exception {
     ClassPool cp = ClassPool.getDefault();
     CtClass cc = cp.makeClass("ee.murkaje.TestNullPtr$Gen" + counter.getAndIncrement());
 
@@ -38,11 +38,11 @@ public class TestNullPtr {
     return (GeneratedBase) cc.toClass().getDeclaredConstructor().newInstance();
   }
 
-  public static void assertNpeMessage(Runnable testCase, String expectedMessage) {
+  private static void assertNpeMessage(Runnable testCase, String expectedMessage) {
     assertNpeMessage(testCase, exceptionMessage -> assertEquals(expectedMessage, exceptionMessage));
   }
 
-  public static void assertNpeMessage(Runnable testCase, Consumer<String> messageVerifier) {
+  private static void assertNpeMessage(Runnable testCase, Consumer<String> messageVerifier) {
     NullPointerException npe = assertThrows(NullPointerException.class, testCase::run);
 
     StackTraceElement[] filteredTrace = Arrays.stream(npe.getStackTrace())
@@ -56,7 +56,15 @@ public class TestNullPtr {
   }
 
   @Test
-  public void testLocalVariable() throws Exception {
+  void testConstant() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "((String)null).toLowerCase();");
+
+    assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null constant");
+  }
+
+  @Test
+  void testLocalVariable() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "String myString = null;" +
         "myString.toLowerCase();");
@@ -65,14 +73,14 @@ public class TestNullPtr {
   }
 
   @Test
-  public void testLocalVariableWithDebug() throws Exception {
+  void testLocalVariableWithDebug() throws Exception {
     GeneratedBase testClass = genTestClass("");
 
     assertNpeMessage(testClass::generateNpeDebug, "Invoking java.lang.String#toLowerCase on null local variable myVar:java.lang.String");
   }
 
   @Test
-  public void testMethodParam() throws Exception {
+  void testMethodParam() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "((String)$1).toLowerCase();");
 
@@ -80,7 +88,7 @@ public class TestNullPtr {
   }
 
   @Test
-  public void testChainedMethod() throws Exception {
+  void testChainedMethod() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "((GeneratedBase)this).getNullString().toLowerCase();");
 
@@ -88,7 +96,7 @@ public class TestNullPtr {
   }
 
   @Test
-  public void testChainedMethodWithDebug() throws Exception {
+  void testChainedMethodWithDebug() throws Exception {
     GeneratedBase testClass = genTestClass("");
 
     assertNpeMessage(testClass::generateNpeDebugMethodChaining,
@@ -96,7 +104,7 @@ public class TestNullPtr {
   }
 
   @Test
-  public void testTernaryBranchMethodChaining() throws Exception {
+  void testTernaryBranchMethodChaining() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "boolean test = true;" +
         "(test ? ((GeneratedBase)this).getNullString() : ((GeneratedBase)this).getEmptyString()).toLowerCase();");
@@ -105,7 +113,7 @@ public class TestNullPtr {
   }
 
   @Test
-  public void testExplicitNullCheck() throws Exception {
+  void testExplicitNullCheck() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "String nullString = null;" +
         "if(nullString == null) {" +
@@ -116,7 +124,7 @@ public class TestNullPtr {
   }
 
   @Test
-  public void testArrayStore() throws Exception {
+  void testArrayStore() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "String[] myStrings = getNullStringArray();" +
         "String str = getEmptyString();" +
@@ -126,7 +134,7 @@ public class TestNullPtr {
   }
 
   @Test
-  public void testArrayLength() throws Exception {
+  void testArrayLength() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "String[] myStrings = getNullStringArray();" +
         "myStrings.length;");
@@ -135,7 +143,7 @@ public class TestNullPtr {
   }
 
   @Test
-  public void testNullInstanceFieldGet() throws Exception {
+  void testNullInstanceFieldGet() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "TestClass test = null;" +
         "test.stringField;");
@@ -144,7 +152,7 @@ public class TestNullPtr {
   }
 
   @Test
-  public void testInstanceFieldPut() throws Exception {
+  void testInstanceFieldPut() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "TestClass test = null;" +
         "test.stringField = \"\";");
@@ -153,7 +161,7 @@ public class TestNullPtr {
   }
 
   @Test
-  public void testInstanceNullFieldGet() throws Exception {
+  void testInstanceNullFieldGet() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "TestClass test = new TestClass();" +
         "test.stringField.toLowerCase();");
@@ -162,7 +170,7 @@ public class TestNullPtr {
   }
 
   @Test
-  public void testStaticFieldGet() throws Exception {
+  void testStaticFieldGet() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "TestClass.staticStringField.toLowerCase();");
 
@@ -170,13 +178,13 @@ public class TestNullPtr {
   }
 
   @Test
-  public void testNullExceptionThrow() throws Exception {
+  void testNullExceptionThrow() throws Exception {
     GeneratedBase testClass = genTestClass("");
-    assertNpeMessage(testClass::throwNull, "Throwing null exception object");
+    assertNpeMessage(testClass::throwNull, "Throwing null constant");
   }
 
   @Test
-  public void testMethodReference() throws Exception {
+  void testMethodReference() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "TestClass testClass = null;" +
         "TestClass.invokeEmptyMethod(testClass);");
