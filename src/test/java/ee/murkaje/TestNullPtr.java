@@ -1,14 +1,12 @@
 package ee.murkaje;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
@@ -22,11 +20,6 @@ import javassist.CtMethod;
 public class TestNullPtr {
 
   private static AtomicInteger counter = new AtomicInteger(0);
-
-  // For testing odd method signatures
-  public <T extends Map<String, String>> void weirdMethod(T arg, Class<? super Object> arg2) throws IllegalStateException {
-
-  }
 
   @SuppressWarnings("unchecked")
   public static GeneratedBase genTestClass(String runMethodSrc) throws Exception {
@@ -51,7 +44,14 @@ public class TestNullPtr {
 
   public static void assertNpeMessage(Runnable testCase, Consumer<String> messageVerifier) {
     NullPointerException npe = assertThrows(NullPointerException.class, testCase::run);
+
+    StackTraceElement[] filteredTrace = Arrays.stream(npe.getStackTrace())
+        .filter(e -> e.getClassName().startsWith("ee.murkaje"))
+        .toArray(StackTraceElement[]::new);
+
+    npe.setStackTrace(filteredTrace);
     npe.printStackTrace(System.out);
+
     messageVerifier.accept(npe.getMessage());
   }
 
@@ -82,14 +82,9 @@ public class TestNullPtr {
   @Test
   public void testChainedMethod() throws Exception {
     GeneratedBase testClass = genTestClass("" +
-        "getNullString().toLowerCase();");
+        "((GeneratedBase)this).getNullString().toLowerCase();");
 
-    NullPointerException npe = assertThrows(NullPointerException.class, testClass::run);
-    npe.printStackTrace(System.out);
-
-    //Generated class has changing index, split before and after it
-    assertTrue(npe.getMessage().startsWith("Invoking java.lang.String#toLowerCase on null object returned from ee.murkaje.TestNullPtr$Gen"));
-    assertTrue(npe.getMessage().endsWith("#getNullString"));
+    assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null object returned from ee.murkaje.GeneratedBase#getNullString");
   }
 
   @Test
@@ -104,7 +99,7 @@ public class TestNullPtr {
   public void testTernaryBranchMethodChaining() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "boolean test = true;" +
-        "(test ? GeneratedBase.super.getNullString() : GeneratedBase.super.getEmptyString()).toLowerCase();");
+        "(test ? ((GeneratedBase)this).getNullString() : ((GeneratedBase)this).getEmptyString()).toLowerCase();");
 
     assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null object returned from ee.murkaje.GeneratedBase#getNullString");
   }
