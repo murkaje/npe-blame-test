@@ -12,8 +12,43 @@
     <java.version>10</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
-    <npeagent>../npe-blame-agent/target/libnpeblame.so</npeagent>
   </properties>
+
+  <profiles>
+    <profile>
+      <id>linux</id>
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+      <properties>
+        <npeagent>../npe-blame-agent/target/libnpeblame.so=debug</npeagent>
+      </properties>
+    </profile>
+    <profile>
+      <id>mac</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <properties>
+        <npeagent>../npe-blame-agent/target/libnpeblame.dylib=debug</npeagent>
+      </properties>
+    </profile>
+    <profile>
+      <id>win</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <npeagent>../npe-blame-agent/target/npeblame.dll=debug</npeagent>
+      </properties>
+    </profile>
+  </profiles>
 
   <dependencies>
     <dependency>
