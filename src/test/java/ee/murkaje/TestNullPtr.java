@@ -191,4 +191,11 @@ public class TestNullPtr {
 
     assertNpeMessage(testClass::run, "Getting method reference ee.murkaje.TestClass::emptyMethod on null method parameter test");
   }
+
+  @Test
+  void testMultipleStackAlteringArgs() throws Exception {
+    GeneratedBase testClass = genTestClass("");
+
+    assertNpeMessage(testClass::consumeStackAlteringExpressions, "Invoking ee.murkaje.TestClass#consumeAll on null local variable testClass:ee.murkaje.TestClass");
+  }
 }

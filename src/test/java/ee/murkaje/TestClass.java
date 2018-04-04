@@ -10,5 +10,8 @@ public class TestClass {
     ((Runnable) test::emptyMethod).run();
   }
 
+  void consumeAll(Object... args) {
+  }
+
   public void emptyMethod() {}
 }
