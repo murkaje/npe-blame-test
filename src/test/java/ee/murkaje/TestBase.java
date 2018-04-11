@@ -31,7 +31,7 @@ public class TestBase {
   @SuppressWarnings("unchecked")
   public static GeneratedBase genTestClass(String runMethodSrc) throws Exception {
     ClassPool cp = ClassPool.getDefault();
-    CtClass cc = cp.makeClass("ee.murkaje.TestJavassistGenerated$Gen" + counter.getAndIncrement());
+    CtClass cc = cp.makeClass("ee.murkaje.$$Generated" + counter.getAndIncrement());
 
     cp.importPackage("ee.murkaje");
     cc.addInterface(cp.get(GeneratedBase.class.getName()));
@@ -47,7 +47,7 @@ public class TestBase {
 
   @SuppressWarnings("unchecked")
   public static GeneratedBase genTestClass(Consumer<MethodVisitor> codeVisitor) throws Exception {
-    String classSlashName = "ee/murkaje/TestJavassistGenerated$Gen" + counter.getAndIncrement();
+    String classSlashName = "ee/murkaje/$$Generated" + counter.getAndIncrement();
 
     ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
     cw.visit(V1_8,
