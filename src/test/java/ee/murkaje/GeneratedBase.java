@@ -39,12 +39,12 @@ public interface GeneratedBase {
         1L, 137L, longVal + 1L, longVal - 1L, longVal * 1L, longVal / 1L, longVal % 1L,
         1.f, 137.f, floatVal + 1.f, floatVal - 1.f, floatVal * 1.f, floatVal / 1.f, floatVal % 1.f,
         1.0, 137.0, doubleVal + 1.0, doubleVal - 1.0, doubleVal * 1.0, doubleVal / 1.0, doubleVal % 1.0,
-        new int[1][2][3], new Object(), new int[1], arr[2], arr[6], ((Object)"").getClass(), null);
+        new int[1][2][3], new Object(), new int[1], arr[2], arr[6], ((Object) "").getClass(), null);
   }
 
   default void run() {
-    consume(null);
+    consume(0, 0, null, 0, 0, null);
   }
 
-  void consume(Object o);
+  void consume(int i1, int i2, Object o1, int i3, long l, Object o2);
 }

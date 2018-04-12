@@ -19,7 +19,7 @@ public class TestJavassistGenerated extends TestBase {
         "String myString = null;" +
         "myString.toLowerCase();");
 
-    assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null local variable in slot 2");
+    assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null local variable in slot 8");
   }
 
   @Test
@@ -32,9 +32,17 @@ public class TestJavassistGenerated extends TestBase {
   @Test
   void testMethodParam() throws Exception {
     GeneratedBase testClass = genTestClass("" +
-        "((String)$1).toLowerCase();");
+        "((String)$6).toLowerCase();");
 
-    assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null method parameter at index 1");
+    assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null method parameter at index 6");
+  }
+
+  @Test
+  void testMethodParamLong() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "((String)$3).toLowerCase();");
+
+    assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null method parameter at index 3");
   }
 
   @Test
@@ -80,7 +88,7 @@ public class TestJavassistGenerated extends TestBase {
         "String str = getEmptyString();" +
         "myStrings[0] = str;");
 
-    assertNpeMessage(testClass::run, "Storing array value to null local variable in slot 2");
+    assertNpeMessage(testClass::run, "Storing array value to null local variable in slot 8");
   }
 
   @Test
@@ -89,7 +97,7 @@ public class TestJavassistGenerated extends TestBase {
         "String[] myStrings = getNullStringArray();" +
         "myStrings.length;");
 
-    assertNpeMessage(testClass::run, "Getting array length of null local variable in slot 2");
+    assertNpeMessage(testClass::run, "Getting array length of null local variable in slot 8");
   }
 
   @Test
@@ -98,7 +106,7 @@ public class TestJavassistGenerated extends TestBase {
         "TestClass test = null;" +
         "test.stringField;");
 
-    assertNpeMessage(testClass::run, "Getting field ee.murkaje.TestClass.stringField of null local variable in slot 2");
+    assertNpeMessage(testClass::run, "Getting field ee.murkaje.TestClass.stringField of null local variable in slot 8");
   }
 
   @Test
@@ -107,7 +115,7 @@ public class TestJavassistGenerated extends TestBase {
         "TestClass test = null;" +
         "test.stringField = \"\";");
 
-    assertNpeMessage(testClass::run, "Setting field ee.murkaje.TestClass.stringField of null local variable in slot 2");
+    assertNpeMessage(testClass::run, "Setting field ee.murkaje.TestClass.stringField of null local variable in slot 8");
   }
 
   @Test
