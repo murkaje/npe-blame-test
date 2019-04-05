@@ -1,6 +1,7 @@
 package ee.murkaje;
 
 import org.junit.jupiter.api.Test;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 
 public class TestAsmGenerated extends TestBase implements Opcodes {
@@ -283,7 +284,7 @@ public class TestAsmGenerated extends TestBase implements Opcodes {
   }
 
   @Test
-  void testWideOpsInMiddle() throws Exception {
+  void testWideOpsInMiddleAndPush() throws Exception {
     GeneratedBase testClass = genTestClass(mv -> {
       mv.visitInsn(ACONST_NULL);
       mv.visitVarInsn(ASTORE, 256); // WIDE ASTORE  0x0100
@@ -297,5 +298,89 @@ public class TestAsmGenerated extends TestBase implements Opcodes {
     });
 
     assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null local variable in slot 256");
+  }
+
+  @Test
+  void testTableSwitchInMiddle() throws Exception {
+    GeneratedBase testClass = genTestClass(mv -> {
+      mv.visitInsn(ACONST_NULL);
+      mv.visitInsn(ICONST_0);
+      Label defaultJump = new Label();
+      Label jump0 = new Label();
+      Label jump1 = new Label();
+      Label jump2 = new Label();
+      mv.visitTableSwitchInsn(12, 14, defaultJump, jump0, jump1, jump2);
+      mv.visitLabel(jump0);
+      mv.visitJumpInsn(GOTO, defaultJump);
+      mv.visitLabel(jump1);
+      mv.visitJumpInsn(GOTO, defaultJump);
+      mv.visitLabel(jump2);
+      mv.visitJumpInsn(GOTO, defaultJump);
+      mv.visitLabel(defaultJump);
+      mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "toLowerCase", "()Ljava/lang/String;", false);
+      mv.visitInsn(POP);
+      mv.visitInsn(RETURN);
+    });
+
+    assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null constant");
+  }
+
+  @Test
+  void testTableSwitchBranchPushes() throws Exception {
+    GeneratedBase testClass = genTestClass(mv -> {
+      mv.visitIntInsn(BIPUSH, 13);
+      Label defaultJump = new Label();
+      Label jump0 = new Label();
+      Label jump1 = new Label();
+      Label jump2 = new Label();
+      Label switchEnd = new Label();
+      mv.visitTableSwitchInsn(12, 14, defaultJump, jump0, jump1, jump2);
+      mv.visitLabel(jump0);
+      mv.visitVarInsn(ALOAD, 0);
+      mv.visitMethodInsn(INVOKEINTERFACE, "ee/murkaje/GeneratedBase", "getEmptyString", "()Ljava/lang/String;", true);
+      mv.visitJumpInsn(GOTO, switchEnd);
+      mv.visitLabel(jump1);
+      mv.visitVarInsn(ALOAD, 0);
+      mv.visitMethodInsn(INVOKEINTERFACE, "ee/murkaje/GeneratedBase", "getNullString", "()Ljava/lang/String;", true);
+      mv.visitJumpInsn(GOTO, switchEnd);
+      mv.visitLabel(jump2);
+      mv.visitVarInsn(ALOAD, 0);
+      mv.visitMethodInsn(INVOKEINTERFACE, "ee/murkaje/GeneratedBase", "getEmptyString", "()Ljava/lang/String;", true);
+      mv.visitJumpInsn(GOTO, switchEnd);
+      mv.visitLabel(defaultJump);
+      mv.visitVarInsn(ALOAD, 0);
+      mv.visitMethodInsn(INVOKEINTERFACE, "ee/murkaje/GeneratedBase", "getEmptyString", "()Ljava/lang/String;", true);
+      mv.visitLabel(switchEnd);
+      mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "toLowerCase", "()Ljava/lang/String;", false);
+      mv.visitInsn(POP);
+      mv.visitInsn(RETURN);
+    });
+
+    assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null object returned from ee.murkaje.GeneratedBase#getNullString");
+  }
+
+  @Test
+  void testLookupSwitchInMiddle() throws Exception {
+    GeneratedBase testClass = genTestClass(mv -> {
+      mv.visitInsn(ACONST_NULL);
+      mv.visitInsn(ICONST_0);
+      Label defaultJump = new Label();
+      Label jump0 = new Label();
+      Label jump1 = new Label();
+      Label jump2 = new Label();
+      mv.visitLookupSwitchInsn(defaultJump, new int[]{1, 13, 1337}, new Label[]{jump0, jump1, jump2});
+      mv.visitLabel(jump0);
+      mv.visitJumpInsn(GOTO, defaultJump);
+      mv.visitLabel(jump1);
+      mv.visitJumpInsn(GOTO, defaultJump);
+      mv.visitLabel(jump2);
+      mv.visitJumpInsn(GOTO, defaultJump);
+      mv.visitLabel(defaultJump);
+      mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "toLowerCase", "()Ljava/lang/String;", false);
+      mv.visitInsn(POP);
+      mv.visitInsn(RETURN);
+    });
+
+    assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null constant");
   }
 }

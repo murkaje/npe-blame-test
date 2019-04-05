@@ -183,35 +183,6 @@ public class TestJavassistGenerated extends TestBase {
   }
 
   @Test
-  void testInDyInMiddle() {
-    GeneratedBase testClass = (i1, i2, o1, i3, l, o2) -> {
-      String nullString = null;
-      // In 9+ this is compiled to invokeDynamic with bsm calling StringConcatFactory#makeConcatWithConstants
-      String concatString = "hello " + i1 + i2 + o2;
-      nullString.toLowerCase();
-    };
-
-    assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null local variable nullString:java.lang.String");
-  }
-
-  @Test
-  void testLookupSwitchInMiddle() throws Exception {
-    GeneratedBase testClass = (i1, i2, o1, i3, l, o2) -> {
-      String nullString = null;
-      int i = 13;
-      switch (i) {
-        case 0: break;
-        case 17: break;
-        case 1337: break;
-        default: break;
-      }
-      nullString.toLowerCase();
-    };
-
-    assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null local variable nullString:java.lang.String");
-  }
-
-  @Test
   void testMultipleStackAlteringArgs() throws Exception {
     GeneratedBase testClass = (int i1, int i2, Object o1, int i3, long l, String o2) -> {
       int[] arr = new int[]{1, 2, 3, 4, 5, 6, 7};
