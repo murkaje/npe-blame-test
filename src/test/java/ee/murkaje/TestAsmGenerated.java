@@ -281,4 +281,21 @@ public class TestAsmGenerated extends TestBase implements Opcodes {
 
     assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null constant");
   }
+
+  @Test
+  void testWideOpsInMiddle() throws Exception {
+    GeneratedBase testClass = genTestClass(mv -> {
+      mv.visitInsn(ACONST_NULL);
+      mv.visitVarInsn(ASTORE, 256); // WIDE ASTORE  0x0100
+      mv.visitVarInsn(ALOAD, 256);  // WIDE ALOAD   0x0100
+      mv.visitInsn(ICONST_0);
+      mv.visitVarInsn(ISTORE, 9);
+      mv.visitIincInsn(9, 256);     // WIDE IINC    0x0009 0x0100
+      mv.visitMethodInsn(INVOKEVIRTUAL, "java/lang/String", "toLowerCase", "()Ljava/lang/String;", false);
+      mv.visitInsn(POP);
+      mv.visitInsn(RETURN);
+    });
+
+    assertNpeMessage(testClass::run, "Invoking java.lang.String#toLowerCase on null local variable in slot 256");
+  }
 }

@@ -12,6 +12,7 @@
     <java.version>11</java.version>
     <maven.compiler.source>${java.version}</maven.compiler.source>
     <maven.compiler.target>${java.version}</maven.compiler.target>
+    <npe.agent.log.level>trace</npe.agent.log.level>
   </properties>
 
   <profiles>
@@ -23,7 +24,7 @@
         </os>
       </activation>
       <properties>
-        <npeagent>../npe-blame-agent/target/libnpeblame.so=debug</npeagent>
+        <npeagent>../npe-blame-agent/target/libnpeblame.so</npeagent>
       </properties>
     </profile>
     <profile>
@@ -34,7 +35,7 @@
         </os>
       </activation>
       <properties>
-        <npeagent>../npe-blame-agent/target/libnpeblame.dylib=debug</npeagent>
+        <npeagent>../npe-blame-agent/target/libnpeblame.dylib</npeagent>
       </properties>
     </profile>
     <profile>
@@ -45,7 +46,7 @@
         </os>
       </activation>
       <properties>
-        <npeagent>../npe-blame-agent/target/npeblame.dll=debug</npeagent>
+        <npeagent>../npe-blame-agent/target/npeblame.dll</npeagent>
       </properties>
     </profile>
   </profiles>
@@ -82,7 +83,7 @@
         <configuration>
           <forkCount>1</forkCount>
           <reuseForks>false</reuseForks>
-          <argLine>-agentpath:${npeagent}</argLine>
+          <argLine>-agentpath:${npeagent}=${npe.agent.log.level}</argLine>
         </configuration>
         <dependencies>
           <dependency>

@@ -36,7 +36,7 @@ public class TestBase {
     cp.importPackage("ee.murkaje");
     cc.addInterface(cp.get(GeneratedBase.class.getName()));
 
-    cc.addMethod(CtMethod.make("public void consume(int i1, int i2, Object o1, int i3, long l, Object o2) {" + runMethodSrc + "}", cc));
+    cc.addMethod(CtMethod.make("public void consume(int i1, int i2, Object o1, int i3, long l, String o2) {" + runMethodSrc + "}", cc));
 
     Path classDebugPath = Paths.get("target/generated/ee/murkaje/TestJavassistGenerated$Gen.class");
     Files.createDirectories(classDebugPath.getParent());
@@ -66,7 +66,7 @@ public class TestBase {
     constructor.visitMaxs(-1, -1);
     constructor.visitEnd();
 
-    MethodVisitor consumeMethod = cw.visitMethod(ACC_PUBLIC, "consume", "(IILjava/lang/Object;IJLjava/lang/Object;)V", null, null);
+    MethodVisitor consumeMethod = cw.visitMethod(ACC_PUBLIC, "consume", "(IILjava/lang/Object;IJLjava/lang/String;)V", null, null);
 
     consumeMethod.visitCode();
     codeVisitor.accept(consumeMethod);
@@ -76,6 +76,9 @@ public class TestBase {
     cw.visitEnd();
 
     byte[] bytes = cw.toByteArray();
+    Path classDebugPath = Paths.get("target/generated/ee/murkaje/TestAsmGenerated$Gen.class");
+    Files.createDirectories(classDebugPath.getParent());
+    Files.write(classDebugPath, bytes);
     Class<? extends GeneratedBase> generatedClass = cl.defineClass(classSlashName.replace('/', '.'), bytes);
 
     return generatedClass.getDeclaredConstructor().newInstance();
