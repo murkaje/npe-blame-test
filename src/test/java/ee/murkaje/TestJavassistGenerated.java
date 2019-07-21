@@ -1,6 +1,7 @@
 package ee.murkaje;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 //TODO: Implicit null checks(invokevirtual getClass() + pop)(Objects.requireNonNull in 9+) for indy, inner <init>, etc.
 @SuppressWarnings({"ConstantConditions", "ResultOfMethodCallIgnored", "RedundantCast", "CodeBlock2Expr", "UnnecessaryLocalVariable",
@@ -80,6 +81,7 @@ public class TestJavassistGenerated extends TestBase {
   }
 
   @Test
+  @EnabledIfSystemProperty(named = "suite", matches = "full")
   void testTernaryBranchMethodChaining() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "boolean test = true;" +
@@ -89,6 +91,7 @@ public class TestJavassistGenerated extends TestBase {
   }
 
   @Test
+  @EnabledIfSystemProperty(named = "suite", matches = "full")
   void testExplicitNullCheck() throws Exception {
     GeneratedBase testClass = (i1, i2, o1, i3, l, nullString) -> {
       if(nullString == null) {
@@ -163,6 +166,7 @@ public class TestJavassistGenerated extends TestBase {
   }
 
   @Test
+  @EnabledIfSystemProperty(named = "suite", matches = "full")
   void testMethodReference() throws Exception {
     GeneratedBase testClass = genTestClass("" +
         "TestClass testClass = null;" +

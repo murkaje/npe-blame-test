@@ -1,6 +1,7 @@
 package ee.murkaje;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 
@@ -326,6 +327,7 @@ public class TestAsmGenerated extends TestBase implements Opcodes {
   }
 
   @Test
+  @EnabledIfSystemProperty(named = "suite", matches = "full")
   void testTableSwitchBranchPushes() throws Exception {
     GeneratedBase testClass = genTestClass(mv -> {
       mv.visitIntInsn(BIPUSH, 13);
