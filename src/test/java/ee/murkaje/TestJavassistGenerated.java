@@ -5,7 +5,7 @@ import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 
 //TODO: Implicit null checks(invokevirtual getClass() + pop)(Objects.requireNonNull in 9+) for indy, inner <init>, etc.
 @SuppressWarnings({"ConstantConditions", "ResultOfMethodCallIgnored", "RedundantCast", "CodeBlock2Expr", "UnnecessaryLocalVariable",
-    "DuplicateBranchesInSwitch", "PointlessArithmeticExpression", "unused"})
+    "PointlessArithmeticExpression", "unused"})
 public class TestJavassistGenerated extends TestBase {
 
   @Test
@@ -102,15 +102,153 @@ public class TestJavassistGenerated extends TestBase {
     assertNpeMessage(testClass::run, "Explicitly thrown after null check of local variable nullString:java.lang.String");
   }
 
+  //region array store
   @Test
-  void testArrayStore() throws Exception {
+  void testObjectArrayStore() throws Exception {
     GeneratedBase testClass = genTestClass("" +
-        "String[] myStrings = getNullStringArray();" +
-        "String str = getEmptyString();" +
-        "myStrings[0] = str;");
+        "String[] arr = null;" +
+        "arr[0] = \"hello\";");
 
-    assertNpeMessage(testClass::run, "Storing array value to null local variable in slot 8");
+    assertNpeMessage(testClass::run, "Storing object to null array - local variable in slot 8");
   }
+
+  @Test
+  void testIntArrayStore() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "int[] arr = null;" +
+        "arr[0] = 1;");
+
+    assertNpeMessage(testClass::run, "Storing int to null array - local variable in slot 8");
+  }
+
+  @Test
+  void testLongArrayStore() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "long[] arr = null;" +
+        "arr[0] = 1L;");
+
+    assertNpeMessage(testClass::run, "Storing long to null array - local variable in slot 8");
+  }
+
+  @Test
+  void testFloatArrayStore() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "float[] arr = null;" +
+        "arr[0] = 42.f;");
+
+    assertNpeMessage(testClass::run, "Storing float to null array - local variable in slot 8");
+  }
+
+  @Test
+  void testDoubleArrayStore() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "double[] arr = null;" +
+        "arr[0] = 42.0;");
+
+    assertNpeMessage(testClass::run, "Storing double to null array - local variable in slot 8");
+  }
+
+  @Test
+  void testBooleanArrayStore() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "boolean[] arr = null;" +
+        "arr[0] = true;");
+
+    assertNpeMessage(testClass::run, "Storing byte/boolean to null array - local variable in slot 8");
+  }
+
+  @Test
+  void testCharArrayStore() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "char[] arr = null;" +
+        "arr[0] = '∠';");
+
+    assertNpeMessage(testClass::run, "Storing char to null array - local variable in slot 8");
+  }
+
+  @Test
+  void testShortArrayStore() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "short[] arr = null;" +
+        "arr[0] = (short) 32760;");
+
+    assertNpeMessage(testClass::run, "Storing short to null array - local variable in slot 8");
+  }
+  //endregion array store
+
+  //region array load
+  @Test
+  void testObjectArrayLoad() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "String[] myStrings = null;" +
+        "myStrings[0];");
+
+    assertNpeMessage(testClass::run, "Loading object from null array - local variable in slot 8");
+  }
+
+  @Test
+  void testIntArrayLoad() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "int[] arr = null;" +
+        "arr[0];");
+
+    assertNpeMessage(testClass::run, "Loading int from null array - local variable in slot 8");
+  }
+
+  @Test
+  void testLongArrayLoad() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "long[] arr = null;" +
+        "arr[0];");
+
+    assertNpeMessage(testClass::run, "Loading long from null array - local variable in slot 8");
+  }
+
+  @Test
+  void testFloatArrayLoad() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "float[] arr = null;" +
+        "arr[0];");
+
+    assertNpeMessage(testClass::run, "Loading float from null array - local variable in slot 8");
+  }
+
+  @Test
+  void testDoubleArrayLoad() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "double[] arr = null;" +
+        "arr[0];");
+
+    assertNpeMessage(testClass::run, "Loading double from null array - local variable in slot 8");
+  }
+
+  @Test
+  void testBooleanArrayLoad() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "boolean[] arr = null;" +
+        "arr[0];");
+
+    assertNpeMessage(testClass::run, "Loading byte/boolean from null array - local variable in slot 8");
+  }
+
+  @Test
+  void testCharArrayLoad() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "char[] arr = null;" +
+        "arr[0];");
+
+    assertNpeMessage(testClass::run, "Loading char from null array - local variable in slot 8");
+  }
+
+  @Test
+  void testShortArrayLoad() throws Exception {
+    GeneratedBase testClass = genTestClass("" +
+        "short[] arr = null;" +
+        "arr[0];");
+
+    assertNpeMessage(testClass::run, "Loading short from null array - local variable in slot 8");
+  }
+  //endregion array load
 
   @Test
   void testArrayLength() throws Exception {
